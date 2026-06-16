@@ -10,5 +10,7 @@
 ## Architecture
 ### Overview
 
+<img width="752" height="553" alt="3R-architecture" src="https://github.com/user-attachments/assets/6f55818f-5837-43e6-80e7-06da474b7586" />
 
-<img width="751" height="553" alt="3R-architecture" src="https://github.com/user-attachments/assets/3ec89c2a-3e0c-4311-b2a9-044c9f7ab2a5" />
+Work In Progress...🚧
+
