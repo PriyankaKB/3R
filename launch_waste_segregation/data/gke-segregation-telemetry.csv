@@ -1,0 +1,5 @@
+batch_id,timestamp,conveyor_speed_fps,weight_grams,ambient_light_lux,camera_temperature_c
+B-101,2026-07-05T18:00:01Z,4.5,150.2,850,34.2
+B-102,2026-07-05T18:00:03Z,4.5,45.0,848,34.3
+B-103,2026-07-05T18:00:05Z,4.2,620.8,851,34.5
+B-104,2026-07-05T18:00:07Z,4.6,12.1,850,34.4

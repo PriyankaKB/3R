@@ -1,0 +1,12 @@
+fastapi>=0.110.0
+uvicorn>=0.28.0
+pydantic>=2.6.0
+python-dotenv>=1.0.1
+requests>=2.31.0
+google-genai>=0.1.1
+google-cloud-aiplatform>=1.44.0
+google-adk>=0.1.0
+
+# NVIDIA GPU Accelerated pandas Layer (CUDA 12 compatible)
+cudf-cu12>=24.2.0
+rmm-cu12>=24.2.0

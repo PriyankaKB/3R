@@ -1,0 +1,9 @@
+﻿Category,Examples,Recyclable,Notes
+"PET (Polyethylene Terephthalate, #1)","Water bottles, soda bottles, food jars",✅ Widely recyclable,Must be clean and dry; high demand in recycling industry
+"HDPE (High‑Density Polyethylene, #2)","Milk jugs, detergent bottles, rigid containers",✅ Widely recyclable,"Strong, durable; recycled into pipes, plastic lumber"
+"PP (Polypropylene, #5)","Yogurt cups, bottle caps, straws",✅ Recyclable in many programs,Increasing acceptance; used in automotive and textiles
+"LDPE (Low‑Density Polyethylene, #4)","Grocery bags, cling film, squeezable bottles",⚠️ Sometimes recyclable,Accepted at drop‑off centers; not in curbside bins
+"PS (Polystyrene, #6 — rigid)","Disposable cutlery, CD cases",⚠️ Limited recyclability,Rarely accepted; brittle and contaminates streams
+"PVC (Polyvinyl Chloride, #3)","Pipes, window frames, medical tubing",❌ Not recyclable in standard systems,Contains chlorine; hazardous when burned
+Mixed / Multi‑layer Plastics,"Chip packets, laminated pouches, Tetra Pak linings",❌ Non‑recyclable,Difficult to separate layers; usually incinerated
+Contaminated Plastics,"Food‑soiled containers, oily wrappers",❌ Non‑recyclable,Contamination ruins recycling batches

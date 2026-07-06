@@ -1,0 +1,221 @@
+---
+# ==============================================================================
+# CONFIGMAPS & SECRETS (Environment Configuration)
+# ==============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: project-3r-config
+data:
+  # GCP Infrastructure Targets
+  GCP_PROJECT_ID: "your-gcp-project-id"       # Change to your real GCP Project ID
+  GCS_WASTE_BUCKET: "your-3r-waste-bucket"   # Change to your GCS Bucket name
+  BQ_DATASET: "waste_analytics"
+  BQ_TELEMETRY_TABLE: "gke_segregation_telemetry"
+  
+  # CoreDNS Internal Agent Communication URLs
+  ROBOTIC_ARM_SERVICE_URL: "http://robotic-arm-service:8081/process"
+  SMART_HMI_SERVICE_URL: "http://smart-hmi-service:8082/update"
+  REVIEW_DISPATCH_SERVICE_URL: "http://review-dispatch-service:8083/log"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: project-3r-secrets
+type: Opaque
+stringData:
+  # Put your Gemini API key here (Kubernetes handles base64 encoding automatically)
+  GEMINI_API_KEY: "AIzaSyYourActualGeminiApiKeyHere" 
+  
+  # Optional: If you need explicit JSON key configuration instead of workload identity
+  # GOOGLE_APPLICATION_CREDENTIALS_JSON: '{"type": "service_account", ...}'
+
+---
+# ==============================================================================
+# 1. SEGREGATION AGENT (Port 8080 - CPU Only Mode)
+# ==============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: segregation-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: segregation-agent
+  template:
+    metadata:
+      labels:
+        app: segregation-agent
+    spec:
+      containers:
+      - name: agent
+        image: gcr.io/your-gcp-project-id/segregation-agent:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - configMapRef:
+            name: project-3r-config
+        env:
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: project-3r-secrets
+              key: GEMINI_API_KEY
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "1000m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: segregation-service
+spec:
+  type: ClusterIP
+  selector:
+    app: segregation-agent
+  ports:
+  - port: 8080
+    targetPort: 8080
+
+---
+# ==============================================================================
+# 2. ROBOTIC ARM AGENT (Port 8081)
+# ==============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: robotic-arm-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: robotic-arm-agent
+  template:
+    metadata:
+      labels:
+        app: robotic-arm-agent
+    spec:
+      containers:
+      - name: agent
+        image: gcr.io/your-gcp-project-id/robotic-arm-agent:latest
+        ports:
+        - containerPort: 8081
+        envFrom:
+        - configMapRef:
+            name: project-3r-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: robotic-arm-service
+spec:
+  type: ClusterIP
+  selector:
+    app: robotic-arm-agent
+  ports:
+  - port: 8081
+    targetPort: 8081
+
+---
+# ==============================================================================
+# 3. SMART HMI AGENT (Port 8082)
+# ==============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-hmi-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-hmi-agent
+  template:
+    metadata:
+      labels:
+        app: smart-hmi-agent
+    spec:
+      containers:
+      - name: agent
+        image: gcr.io/your-gcp-project-id/smart-hmi-agent:latest
+        ports:
+        - containerPort: 8082
+        envFrom:
+        - configMapRef:
+            name: project-3r-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-hmi-service
+spec:
+  type: ClusterIP
+  selector:
+    app: smart-hmi-agent
+  ports:
+  - port: 8082
+    targetPort: 8082
+
+---
+# ==============================================================================
+# 4. REVIEW & DISPATCH AGENT (Port 8083)
+# ==============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: review-dispatch-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: review-dispatch-agent
+  template:
+    metadata:
+      labels:
+        app: review-dispatch-agent
+    spec:
+      containers:
+      - name: agent
+        image: gcr.io/your-gcp-project-id/review-dispatch-agent:latest
+        ports:
+        - containerPort: 8083
+        envFrom:
+        - configMapRef:
+            name: project-3r-config
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: review-dispatch-service
+spec:
+  type: ClusterIP
+  selector:
+    app: review-dispatch-agent
+  ports:
+  - port: 8083
+    targetPort: 8083

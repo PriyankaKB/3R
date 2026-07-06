@@ -1,0 +1,4 @@
+log_id,timestamp,conveyor_queue_depth,active_operator_id,override_triggered,system_health_score
+HMI-881,2026-07-05T17:50:00Z,2,OP-04,false,0.99
+HMI-882,2026-07-05T17:52:00Z,5,OP-04,true,0.94
+HMI-883,2026-07-05T17:54:00Z,1,OP-04,false,0.99

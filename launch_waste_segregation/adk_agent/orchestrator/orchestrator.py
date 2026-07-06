@@ -1,0 +1,62 @@
+import os
+import requests
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from google.adk import Agent, Workflow
+
+app = FastAPI(title="GKE Cloud-Native Multi-Agent Orchestrator")
+
+# Define our highly scalable validation state shared between GKE services
+class WasteStreamPayload(BaseModel):
+    batch_id: str
+    image_gcs_uri: str
+    material_category: str = "UNKNOWN"
+    target_bin_id: str = "NONE"
+    robot_execution_matrix: str = "PENDING"
+    hmi_telemetry_payload: str = ""
+    bigquery_commit_success: bool = False
+
+# Fetch our local internal GKE CoreDNS target mapping addresses
+SEGREGATION_URL = os.getenv("SEGREGATION_SERVICE_URL", "http://adk-segregation-service:8080/execute")
+ROBOTIC_URL = os.getenv("ROBOTIC_SERVICE_URL", "http://adk-robotic-service:8081/execute")
+HMI_URL = os.getenv("HMI_SERVICE_URL", "http://adk-hmi-service:8082/execute")
+DISPATCH_URL = os.getenv("DISPATCH_SERVICE_URL", "http://adk-dispatch-service:8083/execute")
+
+# Define Google ADK Execution Node Steps
+def run_segregation_step(state: dict) -> dict:
+    res = requests.post(SEGREGATION_URL, json=state).json()
+    return res
+
+def run_robotic_step(state: dict) -> dict:
+    res = requests.post(ROBOTIC_URL, json=state).json()
+    return res
+
+def run_hmi_step(state: dict) -> dict:
+    res = requests.post(HMI_URL, json=state).json()
+    return res
+
+def run_dispatch_step(state: dict) -> dict:
+    res = requests.post(DISPATCH_URL, json=state).json()
+    return res
+
+# Construct the Sequential Multi-Agent Workflow Engine Graph using ADK
+workflow_graph = Workflow(
+    name="3r_waste_segregation_pipeline",
+    edges=[
+        ("START", run_segregation_step),
+        (run_segregation_step, run_robotic_step),
+        (run_robotic_step, run_hmi_step),
+        (run_hmi_step, run_dispatch_step),
+        (run_dispatch_step, "END")
+    ]
+)
+
+@app.post("/v1/pipeline/sort")
+async def trigger_conveyor_sorting_loop(payload: WasteStreamPayload):
+    try:
+        # Convert Pydantic payload to clean state dict maps for ADK execution loops
+        initial_state = payload.model_dump()
+        final_state = workflow_graph.run(initial_state)
+        return final_state
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Conveyor pipeline workflow error: {str(e)}")

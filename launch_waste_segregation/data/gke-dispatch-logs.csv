@@ -1,0 +1,2 @@
+batch_id,image_gcs_uri,material_category,assigned_bin_id,robot_matrix,hmi_message,bigquery_commit_success
+B-100,gs://3r-waste-bucket/item_99.jpg,PLASTIC,BIN-02,"ROTATION_Y: 45deg, SPEED_FACTOR: 4.5","[ALERT] Batch B-100 flagged as PLASTIC. Sending to BIN-02.",true

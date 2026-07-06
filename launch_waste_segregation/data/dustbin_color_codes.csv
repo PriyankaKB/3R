@@ -1,0 +1,19 @@
+﻿Sr. No.,Waste Category,Bin Color,Color Code,Symbol
+1,Wet-Organic-Compost ,Green,#70AD47,🌿 Leaf
+2,Wet-Flesh,Red,#FF0000,🍖 Meat cut
+3,Wet-Bones,White,#FFFFFF,🦴 Bone
+4,Wet-Egg-Shells,Yellow,#FFFF00,🥚 Egg shell
+5,Dry-Recyclable-Paper ,Blue,#0000FF,♻️ Recycling arrows
+6,Dry-Recyclable-Plastic,Blue,#0000FF,♻️ Recycling arrows
+7,Dry-Recyclable-Foam,Blue,#0000FF,♻️ Recycling arrows
+8,Dry-Recyclable-Metal,Blue,#0000FF,♻️ Recycling arrows
+9,Dry-Recyclable-Glass,Blue,#0000FF,♻️ Recycling arrows
+10,Dry-Recyclable-Textile ,Blue,#0000FF,♻️ Recycling arrows
+11,Dry-Hazardous,Black,#000000,☠️ Skull hazard
+12,Dry-Bio‑medical,Orange,#FF9900,💉 Syringe
+13,Dry-Electronic-E‑Waste,Grey,#A6A6A6,💻 Circuit board
+14,Dry-Construction,Brown,#833C0C,🧱 Brick
+15,Dry-Sanitary,Pink,#FF99FF,🚻 Hygiene symbol
+16,Dry-Bio-Keratin,Beige,#FFF2CC,✂️ Hair strand
+17,Dry-Non-Recyclable,Teal,#33CCCC,🚫 Do not Recycle
+18,Dry-Radio-Active,Bright Yellow,#FFC000,☢️ Raioactive

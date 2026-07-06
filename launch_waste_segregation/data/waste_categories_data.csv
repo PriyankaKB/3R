@@ -1,0 +1,19 @@
+﻿Sr. No.,Waste Category,Bin Color,Symbol,Materials,Global Reference,Description,Remark
+1,Wet-Organic-Compost ,Green,🌿 Leaf,"Vegetable peels, fruit scraps, garden clippings, farm residues","India SWM 2016, EU Biowaste Directive","Fast‑degrading, compostable plant waste",Suitable for household compost
+2,Wet-Flesh,Red,🍖 Meat cut,"Meat scraps, fish remains",WHO Animal By‑Product Guidelines,"Pathogen risk, requires biogas or special composting",Not for household compost
+3,Wet-Bones,White,🦴 Bone,Animal bones,Fertilizer industry (bone meal),"Slow‑degrading, can be processed into bone meal",Specialized recycling
+4,Wet-Egg-Shells,Yellow,🥚 Egg shell,Egg shells,EU Biowaste Directive,"Calcium‑rich, compostable",Excellent soil amendment
+5,Dry-Recyclable-Paper ,Blue ,♻️ Recycling arrows + Plastic,Plastic,UN Waste Hierarchy,Clean recyclables,Send to recycling plants
+6,Dry-Recyclable-Plastic,Blue,♻️ Recycling arrows + Foam,"EPS,PE/PP Foams - Packaging blocks, thermocol sheets, food containers, Pool noodles, protective packaging, automotive foam",UN Waste Hierarchy,Clean recyclables,Send to recycling plants
+7,Dry-Recyclable-Foam,Blue,♻️ Recycling arrows + Glass,Glass,UN Waste Hierarchy,Clean recyclables,Send to recycling plants
+8,Dry-Recyclable-Metal,Blue,♻️ Recycling arrows + Paper,"Paper, Cardboard etc.",UN Waste Hierarchy,Clean recyclables,Send to recycling plants
+9,Dry-Recyclable-Glass,Blue,♻️ Recycling arrows + Metal,"Metals-iron, aluminium, steel etc.",UN Waste Hierarchy,Clean recyclables,Send to recycling plants
+10,Dry-Recyclable-Textile ,Blue,♻️ Recycling arrows + Textile,"Cloth rags, fabrics",EU Textile Recycling Directive,Recyclable in textile plants,Separate textile bin
+11,Dry-Hazardous,Black,☠️ Skull hazard,"Batteries, paints, chemicals, PU/Hybrid Sponges- Cushions, mattresses, furniture padding, synthetic pillows, Kitchen scrubbers with dual layers, Contaminated clothes with oil or other hazardous material",Basel Convention,"Toxic, requires special handling",Certified disposal only
+12,Dry-Bio‑medical,Orange,💉 Syringe,"Syringes, bandages, medicines, medical clothes",WHO/OSHA Biomedical Waste Rules,Infectious risk,Color‑coded biomedical bins
+13,Dry-Electronic-E‑Waste,Grey,💻 Circuit board,"Phones, laptops, wires, circuit boards","Basel Convention, India E‑Waste Rules 2022",Contains toxins + valuable metals,Certified e‑waste recyclers
+14,Dry-Construction,Brown,🧱 Brick,"Bricks, concrete, tiles, Dust",Municipal C&D Waste Rules,"Bulky, non‑biodegradable",Separate collection
+15,Dry-Sanitary,Pink,🚻 Hygiene symbol,"Pads, diapers, tissues",India SWM 2016,Non‑biomedical but unhygienic,"Dry waste, not compostable"
+16,Dry-Bio-Keratin,Beige,✂️ Hair strand,"Hair, nails, fur, feathers, hooves",WHO keratin waste studies,"Non‑toxic, slow‑degrading","Dry waste, not compostable"
+17,Dry-Non-Recyclable,Teal,🚫 Do not Recycle,"Silicone gloves, bakeware, tubing, heavy treated leather purses, jackets, footwear, rubber, tyre, etc.",UN Waste Hierarchy,Non‑recyclable but safe,"Dry waste, not compostable"
+18,Dry-Radio-Active,Bright Yellow,☢️ Radioactive,"Radium - Radium Stickers, Clock Dials, Watches etc.",IAEA Guidelines,Radioactive Properties,Radioactive Waste

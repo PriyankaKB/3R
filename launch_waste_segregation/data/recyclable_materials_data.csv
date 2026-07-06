@@ -1,0 +1,7 @@
+﻿Sr. No.,Waste Category,Bin ID,Bin Color,Symbol,Materials,,,
+1,PLASTIC,BIN-00,Blue ,♻️ Recycling arrows + Plastic,Plastics,,,
+2,FOAM,BIN-01,Blue,♻️ Recycling arrows + Foam,"EPS,PE/PP Foams - Packaging blocks, thermocol sheets, food containers, Pool noodles, protective packaging, automotive foam",,,
+3,GLASS,BIN-02,Blue,♻️ Recycling arrows + Glass,Glass,,,
+4,PAPER,BIN-10,Blue,♻️ Recycling arrows + Paper,"Paper, Cardboard etc.",,,
+5,METAL,BIN-11,Blue,♻️ Recycling arrows + Metal,"Metals-iron, aluminium, steel etc.",,,
+6,TEXTILE,BIN-12,Blue,♻️ Recycling arrows + Textile,"Cloth rags, fabrics",,,
