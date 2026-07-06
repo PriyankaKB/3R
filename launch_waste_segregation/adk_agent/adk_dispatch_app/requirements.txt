@@ -6,3 +6,17 @@ requests>=2.31.0
 mcp>=0.1.0
 # Google Cloud BigQuery Streaming client SDK
 google-cloud-bigquery>=3.18.0
+
+pandas
+numpy
+google-cloud-bigquery
+google-adk
+a2a-sdk
+google-genai
+datasets
+nltk
+spacy
+transformers
+fastapi
+uvicorn
+requests
