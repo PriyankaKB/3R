@@ -27,8 +27,89 @@ gcloud iam service-accounts add-iam-policy-binding project-3r-gke-sa@your-gcp-pr
     --member="serviceAccount:your-gcp-project-id.svc.id.goog[default/project-3r-ksa]"
 
 ```
+## Consider below commands to handle permission related issues
 
+# 1. Grant permissions to submit builds
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+    --member="user:priyanka.b@stellarrimz.com" \
+    --role="roles/cloudbuild.builds.editor"
+
+# 2. Grant permissions to stage the source context in the Cloud Build default bucket
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+    --member="user:priyanka.b@stellarrimz.com" \
+    --role="roles/storage.admin"
 ---
+
+Note: Replace YOUR_PROJECT_ID with your real Google Cloud Project ID.
+
+Verify Service Accounts (If you recently enabled Cloud Build)
+If your project is brand new, the Cloud Build Service Account itself might not have initialized its default bindings yet. Ensure the Cloud Build service account has permission to write to your Artifact Registry:
+
+
+# Get your project number
+PROJECT_NUMBER=$(gcloud projects describe YOUR_PROJECT_ID --format="value(projectNumber)")
+
+# Grant the Cloud Build service account permission to push images into Artifact Registry
+gcloud projects add-iam-policy-binding YOUR_PROJECT_ID \
+    --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
+    --role="roles/artifactregistry.writer"
+
+## For persistent errors consider below commands
+The error occurs because Cloud Build uses a service account to fetch your uploaded source code from the staging storage bucket (`gs://my-gen-ai-sandbox-project1_cloudbuild`), and that specific service account lacks permissions to read from the bucket.
+
+In Google Cloud, Cloud Build can execute using either the legacy Compute Engine default service account (`[PROJECT_NUMBER]-compute@developer.gserviceaccount.com`) or the modern dedicated Cloud Build service account, depending on your project configuration. The error explicitly shows that `659952133659-compute@developer.gserviceaccount.com` is being denied access.
+
+### The Fix
+
+You can grant the required permissions directly using Cloud Shell. Execute the following commands to give the service account permission to read objects from your Cloud Build bucket:
+
+```bash
+# Define project variables
+PROJECT_ID="my-gen-ai-sandbox-project1"
+SERVICE_ACCOUNT="659952133659-compute@developer.gserviceaccount.com"
+BUCKET_NAME="my-gen-ai-sandbox-project1_cloudbuild"
+
+# Grant Storage Object Viewer permission on the specific bucket
+gcloud storage buckets add-iam-policy-binding gs://$BUCKET_NAME \
+    --member="serviceAccount:$SERVICE_ACCOUNT" \
+    --role="roles/storage.objectViewer"
+
+```
+
+OR
+
+# 1. Set the variables in your terminal first
+PROJECT_ID=$(gcloud config get-value project)
+PROJECT_NUMBER=$(gcloud projects describe $PROJECT_ID --format="value(projectNumber)")
+SA_NAME=lab2-cr-service
+
+# 2. Create the .env file using those variables
+cat <<EOF > .env
+PROJECT_ID=$PROJECT_ID
+PROJECT_NUMBER=$PROJECT_NUMBER
+SA_NAME=$SA_NAME
+SERVICE_ACCOUNT=${SA_NAME}@${PROJECT_ID}.iam.gserviceaccount.com
+MODEL="gemini-2.5-flash"
+EOF
+
+### Alternative / Best Practice Recommendation
+
+If you are running builds using the default Compute Engine service account, it often indicates Cloud Build is missing its default wider permissions or is using an older defaults layout. You can explicitly ensure it has standard Cloud Build execution capability on the project level by running:
+
+```bash
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:$SERVICE_ACCOUNT" \
+    --role="roles/cloudbuild.builds.builder"
+
+```
+
+Once you apply the IAM bindings, wait about 10–15 seconds for the permissions to propagate globally, then re-run your build command:
+
+```bash
+gcloud builds submit --tag us-central1-docker.pkg.dev/my-gen-ai-sandbox-project1/project-3r-repo/orchestrator:latest .
+
+```
+
 
 ### Step 2: The Security-Compliant YAML (`project-3r-adc.yaml`)
 
@@ -36,6 +117,24 @@ This updated manifest provisions a Kubernetes Service Account (`project-3r-ksa`)
 
 ```yaml
 ---
+
+## Enable necessary APIs
+
+# Ensure your project is set correctly
+PROJECT_ID=$(gcloud config get-value project 2>/dev/null)
+echo "Enabling APIs for Project: $PROJECT_ID"
+
+# Enable Google Kubernetes Engine (GKE) and Artifact Registry
+gcloud services enable container.googleapis.com --project=$PROJECT_ID
+gcloud services enable artifactregistry.googleapis.com --project=$PROJECT_ID
+
+# Enable Vertex AI / AI Platform and API Keys Management
+gcloud services enable aiplatform.googleapis.com --project=$PROJECT_ID
+gcloud services enable apikeys.googleapis.com --project=$PROJECT_ID
+
+# Enable BigQuery and Location/Maps Platforms
+gcloud services enable bigquery.googleapis.com --project=$PROJECT_ID
+gcloud services enable mapstools.googleapis.com --project=$PROJECT_ID
 # ==============================================================================
 # KUBERNETES SERVICE ACCOUNT (WORKLOAD IDENTITY / ADC LINK)
 # ==============================================================================

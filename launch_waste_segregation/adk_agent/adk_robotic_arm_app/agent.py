@@ -65,7 +65,7 @@ bigquery_toolset = tools.get_bigquery_mcp_toolset()
 
 # 3. Define the Robot Agent itself
 robot_agent = LlmAgent(
-    model='gemini-2.5-flash-lite',
+    model='gemini-2.5-flash',
     name='robotic_arm_agent',
     description="Calculates conveyor sort locations and physics trajectory coordinates.",
     instruction=f"""
