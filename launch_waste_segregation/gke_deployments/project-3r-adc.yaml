@@ -20,7 +20,7 @@ metadata:
 data:
   GCP_PROJECT_ID: "your-gcp-project-id"
   GCS_WASTE_BUCKET: "your-3r-waste-bucket"
-  BQ_DATASET: "waste_analytics"
+  BQ_DATASET: "waste_segregation_3r"
   BQ_TELEMETRY_TABLE: "gke_segregation_telemetry"
   SEGREGATION_AGENT_URL: "http://adk-segregation-service:8080/process"
   ROBOTIC_ARM_AGENT_URL: "http://adk-robotic-service:8081/process"
