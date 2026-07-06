@@ -12,5 +12,8 @@
 
 <img width="752" height="553" alt="3R-architecture" src="https://github.com/user-attachments/assets/6f55818f-5837-43e6-80e7-06da474b7586" />
 
+## Multi-Agent Architecture 3R
+![alt text](multi-agent-architecture-3R.png)
+
 Work In Progress...🚧
 
