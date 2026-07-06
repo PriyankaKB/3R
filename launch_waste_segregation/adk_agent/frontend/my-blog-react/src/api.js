@@ -1,5 +1,5 @@
 // api.js
-const BASE_URL = process.env.REACT_APP_ORCHESTRATOR_URL || "http://localhost:8005";
+const BASE_URL = process.env.REACT_APP_ORCHESTRATOR_URL || "http://localhost:8084";
 
 export async function callAgent(agent, endpoint, payload = {}) {
   const res = await fetch(`${BASE_URL}/${agent}/${endpoint}`, {

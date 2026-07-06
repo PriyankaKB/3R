@@ -1,5 +1,6 @@
 import os
 import dotenv
+import requests
 from adk_robotic_arm_app import tools
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,13 +11,20 @@ from a2a_types import AgentCard
 dotenv.load_dotenv()
 PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT', 'project_not_set')
 
-# The internal GKE DNS URL for the next step in the pipeline
-HMI_AGENT_URL = os.getenv("SMART_HMI_AGENT_URL", "http://adk-hmi-service:8082/process")
+# Internal GKE DNS URLs for pipeline orchestration
+HMI_AGENT_URL = os.getenv("HMI_AGENT_URL", "http://adk-hmi-service:8082/process")
+SEGREGATION_AGENT_URL = os.getenv("SEGREGATION_AGENT_URL", "http://adk-segregation-service:8080/process")
 
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permits requests from any origin (ideal for testing)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permits all HTTP verbs (GET, POST, etc.)
+    allow_headers=["*"],
+)
 
-# 1. Define the next agent's card
+# 1. Define Agent Cards for downstream/collaborating agents
 hmi_card = AgentCard(
     name="smart_hmi_agent",
     description="Formulates telemetry notifications and updates UI displays.",
@@ -28,11 +36,28 @@ hmi_card = AgentCard(
     version="1.0.0"
 )
 
-# 2. Setup the Remote A2A instance
+segregation_card = AgentCard(
+    name="segregation_agent",
+    description="Handles material sorting validation and physical segregation pipeline tracking.",
+    defaultInputModes=["application/json"],
+    defaultOutputModes=["application/json"],
+    skills=[{"id": "validate_sorting", "name": "validate_sorting", "description": "Validates bin assignments.", "tags": ["sorting"]}],
+    url=SEGREGATION_AGENT_URL,
+    capabilities={},
+    version="1.0.0"
+)
+
+# 2. Setup the Remote A2A instances
 smart_hmi_agent = RemoteA2aAgent(
     name="smart_hmi_agent",
     description="Agent handling downstream dashboard updates and user messages.",
     agent_card=hmi_card
+)
+
+segregation_agent = RemoteA2aAgent(
+    name="segregation_agent",
+    description="Agent handling physical material segregation updates.",
+    agent_card=segregation_card
 )
 
 maps_toolset = tools.get_maps_mcp_toolset()
@@ -43,19 +68,25 @@ robot_agent = LlmAgent(
     model='gemini-2.5-flash-lite',
     name='robotic_arm_agent',
     description="Calculates conveyor sort locations and physics trajectory coordinates.",
-    instruction="""
+    instruction=f"""
         Evaluate the material category and conveyor speed given. 
-        Calculate the appropriate physical BIN assignment:
+        1.  **BigQuery toolset:** Access recyclable_materials_data, recycle_bin_id_matrix and dustbin_color_codes in the waste_segregation_3r dataset. Do not use any other dataset.
+        Run all query jobs from project id: {PROJECT_ID}.
+
+        2.  **Maps Toolset:** Use this for real-world location analysis, finding competition/places and calculating necessary travel routes.
+        Include a hyperlink to an interactive map in your response where appropriate.
+        Calculate the appropriate physical BIN assignment by referring to recyclable_materials_data:
         For example:
-        - PLASTIC -> BIN-01
-        - FOAM -> BIN-00
-        - GLASS -> BIN-01
-        - PAPER -> BIN-12
+        - Waste Category -> Bin ID
+        - PLASTIC -> BIN-00
+        - FOAM -> BIN-01
+        - GLASS -> BIN-02
+        - PAPER -> BIN-10
         - METAL -> BIN-11
         - TEXTILE -> BIN-12
-        Output JSON mapping and hand off the task to the smart_hmi_agent.
+        Output JSON mapping and hand off the task to the sub-agents.
     """,
-    sub_agents=[smart_hmi_agent]
+    sub_agents=[smart_hmi_agent, segregation_agent]
 )
 
 # Expose its own Agent Card for discovery
@@ -72,19 +103,29 @@ async def get_card():
 async def process(request: Request):
     data = await request.json()
     
-    # Process the kinematics (Deterministic or LLM-augmented helper)
+    # Process the kinematics
     material = data.get("material_category", "UNKNOWN")
     speed = data.get("conveyor_speed_fps", 4.5)
     
-    bin_map = {"FOAM": "BIN-01", "PLASTIC": "BIN-02", "PAPER": "BIN-03", "METAL": "BIN-04"}
+    # Keeping your explicit BigQuery baseline mappings intact
+    bin_map = {"PLASTIC": "BIN-00", "FOAM": "BIN-01", "GLASS": "BIN-02", "PAPER": "BIN-10", "METAL": "BIN-11", "TEXTILE": "BIN-12"}
     assigned_bin = bin_map.get(material, "BIN-MISC")
     
     # Enrich the payload state
     data["assigned_bin_id"] = assigned_bin
     data["robot_execution_matrix"] = f"ROTATION_Y: 45deg, SPEED_FACTOR: {speed}"
     
-    # Collaborate: Cascade message forward via the sub-agent interface over GKE CoreDNS
-    # Instead of manual requests, your A2A format allows root_agent structure execution
-    import requests
-    response = requests.post(HMI_AGENT_URL, json=data).json()
-    return response
+    # 1. Interact with Segregation Agent to process sorting updates
+    try:
+        segregation_response = requests.post(SEGREGATION_AGENT_URL, json=data).json()
+        # Optionally merge any new state data from the segregation step
+        if isinstance(segregation_response, dict):
+            data.update(segregation_response)
+    except Exception as e:
+        # Fallback logging if service is down, maintaining pipeline resilience
+        data["segregation_error"] = str(e)
+
+    # 2. Cascade final state forward to the HMI Agent for UI/Dashboard tracking
+    hmi_response = requests.post(HMI_AGENT_URL, json=data).json()
+    
+    return hmi_response

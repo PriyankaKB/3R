@@ -17,10 +17,10 @@ class WasteStreamPayload(BaseModel):
     bigquery_commit_success: bool = False
 
 # Fetch our local internal GKE CoreDNS target mapping addresses
-SEGREGATION_URL = os.getenv("SEGREGATION_SERVICE_URL", "http://adk-segregation-service:8080/execute")
-ROBOTIC_URL = os.getenv("ROBOTIC_SERVICE_URL", "http://adk-robotic-service:8081/execute")
-HMI_URL = os.getenv("HMI_SERVICE_URL", "http://adk-hmi-service:8082/execute")
-DISPATCH_URL = os.getenv("DISPATCH_SERVICE_URL", "http://adk-dispatch-service:8083/execute")
+SEGREGATION_URL = os.getenv("SEGREGATION_AGENT_URL", "http://adk-segregation-service:8080/process")
+ROBOTIC_URL = os.getenv("ROBOTIC_ARM_AGENT_URL", "http://adk-robotic-service:8081/process")
+HMI_URL = os.getenv("HMI_AGENT_URL", "http://adk-hmi-service:8082/process")
+DISPATCH_URL = os.getenv("DISPATCH_AGENT_URL", "http://adk-dispatch-service:8083/process")
 
 # Define Google ADK Execution Node Steps
 def run_segregation_step(state: dict) -> dict:

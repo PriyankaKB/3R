@@ -21,13 +21,20 @@ dotenv.load_dotenv()
 PROJECT_ID = os.getenv('GOOGLE_CLOUD_PROJECT', 'my-gen-ai-sandbox-project1')
 
 # Fetch downstream cluster internal CoreDNS URLs
-ROBOTIC_ARM_URL = os.getenv("ROBOTIC_ARM_AGENT_URL", "http://adk-robotic-service:8081/process")
+ROBOTIC_ARM_AGENT_URL = os.getenv("ROBOTIC_ARM_AGENT_URL", "http://adk-robotic-service:8081/process")
+HMI_AGENT_URL = os.getenv("HMI_AGENT_URL", "http://adk-hmi-service:8082/process")
 
 # This will automatically pick up your GEMINI_API_KEY from your .env file
 ai_client = genai.Client()
 
 app = FastAPI()
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permits requests from any origin (ideal for testing)
+    allow_credentials=True,
+    allow_methods=["*"],  # Permits all HTTP verbs (GET, POST, etc.)
+    allow_headers=["*"],
+)
 
 # Register downstream agent capability matrix using your card layout
 robotic_card = AgentCard(
@@ -36,7 +43,7 @@ robotic_card = AgentCard(
     defaultInputModes=["application/json"],
     defaultOutputModes=["application/json"],
     skills=[{"id": "arm_sort", "name": "arm_sort", "description": "Kinematics bin destination routing", "tags": ["robotics"]}],
-    url=ROBOTIC_ARM_URL,
+    url=ROBOTIC_ARM_AGENT_URL,
     capabilities={},
     version="1.0.0"
 )
@@ -45,6 +52,24 @@ robotic_arm_agent = RemoteA2aAgent(
     name="robotic_arm_agent",
     description="Agent handling path planning and sorting commands.",
     agent_card=robotic_card
+)
+
+# New interaction definition: Define the Smart HMI Agent's capability card
+hmi_card = AgentCard(
+    name="smart_hmi_agent",
+    description="Formulates real-time notification streams and diagnostic telemetry displays.",
+    defaultInputModes=["application/json"],
+    defaultOutputModes=["application/json"],
+    skills=[{"id": "hmi_alert", "name": "hmi_alert", "description": "Formulates UI status updates", "tags": ["ui"]}],
+    url=HMI_AGENT_URL,
+    capabilities={},
+    version="1.0.0"
+)
+
+smart_hmi_agent = RemoteA2aAgent(
+    name="smart_hmi_agent",
+    description="Agent handling UI/UX status reporting and operations dashboards.",
+    agent_card=hmi_card
 )
 
 maps_toolset = tools.get_maps_mcp_toolset()
@@ -56,13 +81,14 @@ root_agent = LlmAgent(
     name='segregation_agent',
     description="Classifies conveyor items via GCS URIs and dispatches work downstream.",
     instruction=f"""Analyze raw images from Cloud Storage buckets. Categorize items into exactly: PAPER, GLASS, FOAM, METAL, PLASTIC, TEXTILE.
-                    1.  **BigQuery toolset:** Access waste_categories_data in the waste_segregation_3r dataset. Do not use any other dataset.
+                    1.  **BigQuery toolset:** Access waste_categories_data, recyclable_materials_data, plastic_segregation_data, foam_segregation_data, and dustbin_color_codes in the waste_segregation_3r dataset. Do not use any other dataset.
                 Run all query jobs from project id: {PROJECT_ID}. 
 
                     2.  **Maps Toolset:** Use this for real-world location analysis, finding competition/places and calculating necessary travel routes.
                     Include a hyperlink to an interactive map in your response where appropriate.
                 """,
-    sub_agents=[robotic_arm_agent]
+    # Added both downstream sub-agents to allow seamless context delegation
+    sub_agents=[robotic_arm_agent, smart_hmi_agent]
 )
 
 class WasteClassification(BaseModel):
@@ -133,7 +159,7 @@ async def process(request: Request):
 
     # D. Forward state down the A2A chain over GKE network bounds
     try:
-        response_from_arm = requests.post(ROBOTIC_ARM_URL, json=pipeline_payload).json()
+        response_from_arm = requests.post(ROBOTIC_ARM_AGENT_URL, json=pipeline_payload).json()
         return response_from_arm
     except Exception as e:
         return {

@@ -119,7 +119,7 @@ OPTIONS(
 );"
 
 bq load --source_format=CSV --skip_leading_rows=1 --ignore_unknown_values=true --replace \
-    "$PROJECT_ID:$DATASET_NAME.plastic_segregation_data" "$BUCKET_NAME/plastic_segrgation_data.csv"
+    "$PROJECT_ID:$DATASET_NAME.plastic_segregation_data" "$BUCKET_NAME/plastic_segregation_data.csv"
 
 # =====================================================================
 # 5. Create foam_segregation_data Table

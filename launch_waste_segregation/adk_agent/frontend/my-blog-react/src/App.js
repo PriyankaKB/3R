@@ -18,7 +18,7 @@ function App() {
   const [latestDispatch, setLatestDispatch] = useState({
     batch_id: "B-104",
     category: "PLASTIC",
-    bin_id: "BIN-02",
+    bin_id: "BIN-00",
     cycle_time: "600ms"
   });
 

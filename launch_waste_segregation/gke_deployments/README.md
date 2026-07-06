@@ -60,10 +60,10 @@ data:
   GCS_WASTE_BUCKET: "your-3r-waste-bucket"
   BQ_DATASET: "waste_analytics"
   BQ_TELEMETRY_TABLE: "gke_segregation_telemetry"
-  SEGREGATION_AGENT_URL: "http://segregation-service:8080/process"
-  ROBOTIC_ARM_URL: "http://robotic-arm-service:8081/process"
-  HMI_AGENT_URL: "http://smart-hmi-service:8082/update"
-  DISPATCH_AGENT_URL: "http://review-dispatch-service:8083/log"
+  SEGREGATION_AGENT_URL: "http://adk-segregation-service:8080/process"
+  ROBOTIC_ARM_AGENT_URL: "http://adk-robotic-service:8081/process"
+  HMI_AGENT_URL: "http://adk-hmi-service:8082/process"
+  DISPATCH_AGENT_URL: "http://adk-dispatch-service:8083/process"
 
 ---
 # ==============================================================================
@@ -283,3 +283,79 @@ print(response.text)
 ```
 
 Apply this manifest using `kubectl apply -f project-3r-adc.yaml`. Your cluster is now fully compliant with your team's keyless security configuration.
+
+
+### Step 3
+Based on your architecture and the target corporate Artifact Registry layout (`us-central1-docker.pkg.dev/your-gcp-project-id/my-docker-repo/`), you can use Google Cloud Build to compile and push your containers securely via Cloud Shell.
+
+For each application, navigate to its corresponding directory in Cloud Shell and run the respective `gcloud builds submit` command (ensuring the trailing `.` is included to pass the current directory context):
+
+### 1. Segregation Agent
+
+* **Directory:** `adk_segregation_app/`
+* **Command:**
+```bash
+gcloud builds submit --tag us-central1-docker.pkg.dev/your-gcp-project-id/my-docker-repo/segregation-agent:latest .
+
+```
+
+
+
+### 2. Robotic Arm Agent
+
+* **Directory:** `adk_robotic_arm_app/`
+* **Command:**
+```bash
+gcloud builds submit --tag us-central1-docker.pkg.dev/your-gcp-project-id/my-docker-repo/robotic-arm-agent:latest .
+
+```
+
+
+
+### 3. Smart HMI Agent
+
+* **Directory:** `adk_smart_hmi_app/`
+* **Command:**
+```bash
+gcloud builds submit --tag us-central1-docker.pkg.dev/your-gcp-project-id/my-docker-repo/smart-hmi-agent:latest .
+
+```
+
+
+
+### 4. Dispatch Agent
+
+* **Directory:** `adk_dispatch_app/`
+* **Command:**
+```bash
+gcloud builds submit --tag us-central1-docker.pkg.dev/your-gcp-project-id/my-docker-repo/dispatch-agent:latest .
+
+```
+
+
+
+### 5. Orchestrator Agent
+
+* **Directory:** `adk_orchestrator_app/`
+* **Command:**
+```bash
+gcloud builds submit --tag us-central1-docker.pkg.dev/your-gcp-project-id/my-docker-repo/orchestrator-agent:latest .
+
+```
+
+
+
+### 6. React Frontend UI
+
+If your project uses a custom Dockerfile configuration name (such as `frontend.Dockerfile`) inside your React root directory, explicitly point Cloud Build to it using the `--config` flag:
+
+* **Directory:** Your React project root directory
+* **Command:**
+```bash
+gcloud builds submit --config frontend.Dockerfile --tag us-central1-docker.pkg.dev/your-gcp-project-id/my-docker-repo/react-frontend-ui:latest .
+
+```
+
+
+
+*(Note: Replace `your-gcp-project-id` with your actual Google Cloud Project ID and change the `us-central1` or `my-docker-repo` naming parts if your regional configurations or repository names differ).*
