@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PROJECT_ID=$(gcloud config get-value project)
-DATASET_NAME="3r-autonoumous-waste-segregation"
+DATASET_NAME="waste_segregation_3r"
 LOCATION="US"
 
 # Generate bucket name if not provided
@@ -13,7 +13,7 @@ else
 fi
 
 echo "----------------------------------------------------------------"
-echo "MCP news Demo Setup"
+echo "Project-3R Demo Setup"
 echo "Project: $PROJECT_ID"
 echo "Dataset: $DATASET_NAME"
 echo "Bucket:  $BUCKET_NAME"
