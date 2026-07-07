@@ -31,23 +31,13 @@ function App() {
   }, []);
   
 
-  return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Agent Dashboard</h1>
-      <p>Interact with your FastAPI agents via the orchestrator.</p>
-      {agents.map(agent => (
-        <AgentCard key={agent} agent={agent} />
-      ))}
-    </div>
-  );
-
 return (
     <div className="min-h-screen bg-slate-900 text-slate-100 font-sans flex flex-col">
       {/* Top Navigation Control Bar */}
       <header className="bg-slate-950 border-b border-slate-800 p-4 flex justify-between items-center shadow-lg">
         <div className="flex items-center space-x-3">
-          <span className="text-2xl">♻️</span>
-          <h1 className="text-xl font-bold tracking-wider text-emerald-400">PROJECT 3R // SMART HMI</h1>
+          <h1 className="text-xl font-bold tracking-wider text-emerald-400">♻️ PROJECT 3R // SMART HMI</h1>
+          <p>Interact with your FastAPI agents via the orchestrator.</p>
                 {agents.map(agent => (
         <AgentCard key={agent} agent={agent} />
       ))}
