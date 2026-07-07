@@ -1,4 +1,11 @@
 # launch_waste_segrgation
+
+## Refer below codelabs for installation and process flow
+
+https://codelabs.developers.google.com/adk-mcp-bigquery-maps#0
+
+https://codelabs.developers.google.com/codelabs/production-ready-ai-with-gc/5-deploying-agents/deploy-an-adk-agent-to-cloud-run#0
+
 ## Run the setup scripts in setup folder
 
 1. Run the environment setup script. This script enables the BigQuery and Google Maps APIs, and creates a .env file with your Project ID and Maps API Key.
