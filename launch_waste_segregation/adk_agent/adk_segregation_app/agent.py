@@ -9,7 +9,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from google.adk.agents import LlmAgent
 from google.adk.agents.remote_a2a_agent import RemoteA2aAgent
-from google.adk.agents.a2a_types import Message, AgentCard
+from a2a.types import Message, AgentCard
 from google.genai import types
 
 # NVIDIA RAPIDS zero-code drop-in acceleration layer
