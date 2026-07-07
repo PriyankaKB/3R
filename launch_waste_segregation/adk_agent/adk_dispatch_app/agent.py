@@ -44,7 +44,7 @@ smart_hmi_agent = RemoteA2aAgent(
 )
 
 # 2. Configure the Dispatch Agent with its sub-agent hierarchy
-dispatch_agent = LlmAgent(
+root_agent = LlmAgent(
     model='gemini-2.5-flash',
     name='dispatch_agent',
     description="Commits analytical streaming log events to BigQuery storage.",

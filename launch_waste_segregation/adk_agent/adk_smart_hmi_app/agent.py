@@ -87,7 +87,7 @@ bigquery_toolset = tools.get_bigquery_mcp_toolset()
 
 # --- 3. Define Orchestrated Smart HMI LlmAgent Instance ---
 
-hmi_agent = LlmAgent(
+root_agent = LlmAgent(
     model='gemini-2.5-flash',
     name='smart_hmi_agent',
     description="Formats user telemetry alerts and orchestrates verification between upstream/downstream nodes.",
