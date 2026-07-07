@@ -9,14 +9,10 @@ google-cloud-bigquery>=3.18.0
 
 pandas
 numpy
-google-cloud-bigquery
-google-adk
+google-adk>=0.1.0
 a2a-sdk
-google-genai
+google-genai>=0.1.1
 datasets
 nltk
 spacy
 transformers
-fastapi
-uvicorn
-requests

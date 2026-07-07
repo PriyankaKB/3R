@@ -10,13 +10,8 @@ mcp>=0.1.0
 pandas
 numpy
 google-cloud-bigquery
-google-adk
 a2a-sdk
-google-genai
 datasets
 nltk
 spacy
 transformers
-fastapi
-uvicorn
-requests
