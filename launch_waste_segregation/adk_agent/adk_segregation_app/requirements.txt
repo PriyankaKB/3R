@@ -15,7 +15,7 @@ rmm-cu12>=24.2.0
 pandas
 numpy
 google-cloud-bigquery
-a2a-sdk==1.0.0
+a2a-sdk==0.3.26
 google-genai
 datasets
 nltk

@@ -10,7 +10,7 @@ mcp>=0.1.0
 pandas
 numpy
 google-cloud-bigquery
-a2a-sdk==1.0.0
+a2a-sdk==0.3.26
 datasets
 nltk
 spacy
