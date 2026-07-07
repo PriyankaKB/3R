@@ -75,15 +75,8 @@ root_agent = LlmAgent(
 
         2.  **Maps Toolset:** Use this for real-world location analysis, finding competition/places and calculating necessary travel routes.
         Include a hyperlink to an interactive map in your response where appropriate.
+
         Calculate the appropriate physical BIN assignment by referring to recyclable_materials_data:
-        For example:
-        - Waste Category -> Bin ID
-        - PLASTIC -> BIN-00
-        - FOAM -> BIN-01
-        - GLASS -> BIN-02
-        - PAPER -> BIN-10
-        - METAL -> BIN-11
-        - TEXTILE -> BIN-12
         Output JSON mapping and hand off the task to the sub-agents.
     """,
     sub_agents=[smart_hmi_agent, segregation_agent]
