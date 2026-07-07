@@ -43,6 +43,9 @@ smart_hmi_agent = RemoteA2aAgent(
     agent_card=hmi_card
 )
 
+maps_toolset = tools.get_maps_mcp_toolset()
+bigquery_toolset = tools.get_bigquery_mcp_toolset()
+
 # 2. Configure the Dispatch Agent with its sub-agent hierarchy
 root_agent = LlmAgent(
     model='gemini-2.5-flash',
@@ -55,6 +58,7 @@ root_agent = LlmAgent(
                     2. **Maps Toolset:** Use this for real-world location analysis, finding competition/places and calculating necessary travel routes.
                     Include a hyperlink to an interactive map in your response where appropriate.    
     """,
+    tools=[maps_toolset, bigquery_toolset],
     sub_agents=[smart_hmi_agent]  # Linked here for sub-agent discovery and orchestration
 )
 

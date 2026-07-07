@@ -79,6 +79,7 @@ root_agent = LlmAgent(
         Calculate the appropriate physical BIN assignment by referring to recyclable_materials_data:
         Output JSON mapping and hand off the task to the sub-agents.
     """,
+    tools=[maps_toolset, bigquery_toolset],
     sub_agents=[smart_hmi_agent, segregation_agent]
 )
 

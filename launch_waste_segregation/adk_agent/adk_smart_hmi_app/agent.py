@@ -99,6 +99,7 @@ root_agent = LlmAgent(
                     Include a hyperlink to an interactive map in your response where appropriate.    
     """,
     # Registering all 3 sub-agents allows the LLM to orchestrate cross-agent communication if necessary
+    tools=[maps_toolset, bigquery_toolset],
     sub_agents=[dispatch_agent, segregation_agent, robotic_arm_agent]
 )
 

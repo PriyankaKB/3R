@@ -88,7 +88,9 @@ root_agent = LlmAgent(
                     Include a hyperlink to an interactive map in your response where appropriate.
                 """,
     # Added both downstream sub-agents to allow seamless context delegation
+    tools=[maps_toolset, bigquery_toolset],
     sub_agents=[robotic_arm_agent, smart_hmi_agent]
+
 )
 
 class WasteClassification(BaseModel):
