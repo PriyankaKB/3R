@@ -1,8 +1,7 @@
-# 3R
-3R - Reduce, Recycle, Reuse.
+# 3R-Reduce-Reuse-Recycle
 
 ## Description
-**3R** - An effective waste segregation system.
+**3R-Reduce-Reuse-Recycle** - An effective waste segregation system.
 
 
 <img width="434" height="434" alt="3R" src="https://github.com/user-attachments/assets/2bc7fceb-42da-40ca-8d04-60a2120e88c3" />
